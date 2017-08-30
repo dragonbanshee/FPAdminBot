@@ -13,6 +13,8 @@ namespace FPAdminBot
         private IrcClient IrcClient;
         private Config Config;
 
+        private static ulong DISCORD_ADMIN_CHAN = 306261888394854400;
+
         public Connection()
         {
             DiscordClient = new DiscordClient();
@@ -63,6 +65,13 @@ namespace FPAdminBot
         private void IrcClient_OnRawMessage(object sender, IrcEventArgs e)
         {
             Console.WriteLine("RECEIVED IRC MESSAGE: " + e.Data.Message);
+            if (e.Data.From == "FirePowered!~core@FirePowered.bot.firepowered" && e.Data != null && e.Data.Message != null)
+            {
+                if (e.Data.Message != "" && e.Data.Message.Contains("ABUN1") || e.Data.Message.Contains("ABHT"))
+                {
+                    DiscordClient.GetChannel(DISCORD_ADMIN_CHAN).SendMessage(e.Data.Message);
+                }
+            }
         }
 
         private void IrcClient_OnError(object sender, Meebey.SmartIrc4net.ErrorEventArgs e)
@@ -72,15 +81,15 @@ namespace FPAdminBot
 
         private void IrcClient_OnChannelMessage(object sender, IrcEventArgs e)
         {
-            if(e.Data.Channel == "#firepowered-admins")
+            if(e.Data.Channel == "#firepowered-admins" && e.Data.From == "FirePowered!~core@FirePowered.bot.firepowered")
             {
                 if (e.Data.Message.Contains("has reported"))
                 {
-                    DiscordClient.GetChannel(306261888394854400).SendMessage("<@&306863720364244992> " + e.Data.Message);
+                    DiscordClient.GetChannel(DISCORD_ADMIN_CHAN).SendMessage("<@&306863720364244992> " + e.Data.Message);
                 }
                 else
                 {
-                    DiscordClient.GetChannel(306261888394854400).SendMessage(e.Data.Message);
+                    DiscordClient.GetChannel(DISCORD_ADMIN_CHAN).SendMessage(e.Data.Message);
                 }
             }
         }
