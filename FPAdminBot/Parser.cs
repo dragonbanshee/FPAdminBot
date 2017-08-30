@@ -1,21 +1,12 @@
-﻿using System.Web.Script.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace FPAdminBot
 {
     public static class Parser
     {
-        private static JavaScriptSerializer json;
-        private static JavaScriptSerializer JSON
-        {
-            get
-            {
-                return json ?? (json = new JavaScriptSerializer());
-            }
-        }
-        
         public static T ParseJSON<T>(this string @this) where T : class
         {
-            return JSON.Deserialize<T>(@this.Trim());
+            return JsonConvert.DeserializeObject<T>(@this.Trim());
         }
     }
 }

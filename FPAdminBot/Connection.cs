@@ -34,7 +34,8 @@ namespace FPAdminBot
 
             IrcClient.OnChannelMessage += IrcClient_OnChannelMessage;
             IrcClient.OnError += IrcClient_OnError;
-            IrcClient.OnRawMessage += IrcClient_OnRawMessage;
+            //IrcClient.OnRawMessage += IrcClient_OnRawMessage;
+            IrcClient.OnQueryNotice += IrcClient_OnQueryNotice;
 
             try
             {
@@ -62,6 +63,23 @@ namespace FPAdminBot
             IrcClient.Listen(true);
         }
 
+        private void IrcClient_OnQueryNotice(object sender, IrcEventArgs e)
+        {
+            Console.WriteLine("NOTICE: " + e.Data.Message);
+            if(e.Data.Nick == "FirePowered")
+            {
+                if(e.Data.Message != "")
+                {
+                    DiscordClient.GetChannel(DISCORD_ADMIN_CHAN).SendMessage(e.Data.Message);
+                }
+            }
+            else
+            {
+                Console.WriteLine(e.Data.Nick + ", " + e.Data.From);
+            }
+        }
+
+        /*
         private void IrcClient_OnRawMessage(object sender, IrcEventArgs e)
         {
             Console.WriteLine("RECEIVED IRC MESSAGE: " + e.Data.Message);
@@ -73,7 +91,8 @@ namespace FPAdminBot
                 }
             }
         }
-
+        */
+        
         private void IrcClient_OnError(object sender, Meebey.SmartIrc4net.ErrorEventArgs e)
         {
             Console.WriteLine("ERROR: " + e.ErrorMessage);
